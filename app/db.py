@@ -1,10 +1,9 @@
-# app/db.py
 import mysql.connector
 
 def get_connection():
     return mysql.connector.connect(
         host="localhost",
-        user="root",
-        password="Joaco0109/",
+        user="root",               # Cambiá si tenés otro usuario
+        password="rootpassword",           # Cambiá si tenés otra contraseña
         database="gestion_salas"
     )
