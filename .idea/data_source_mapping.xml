@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/58137bc4-ba6f-44c3-b8b3-db17ce0415d7/console.sql" value="58137bc4-ba6f-44c3-b8b3-db17ce0415d7" />
+    <file url="file://$PROJECT_DIR$/Entrega Final/01_create_tables.sql" value="58137bc4-ba6f-44c3-b8b3-db17ce0415d7" />
+    <file url="file://$PROJECT_DIR$/Entrega Final/02_insert_data.sql" value="58137bc4-ba6f-44c3-b8b3-db17ce0415d7" />
+    <file url="file://$PROJECT_DIR$/Entrega Final/03_selects.sql" value="58137bc4-ba6f-44c3-b8b3-db17ce0415d7" />
+  </component>
+</project>
