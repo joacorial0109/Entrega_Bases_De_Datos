@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_connection
+import mysql.connector
 
-program_routes = Blueprint('program_routes')
+program_routes = Blueprint('program_routes', __name__)
 
 @program_routes.route("/programa", methods=["POST"])
 def crear_programa():
@@ -15,13 +16,20 @@ def crear_programa():
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO programa_academico (nombre_programa, id_facultad, tipo)
-        VALUES (%s, %s, %s)
-    """, (nombre_programa, id_facultad, tipo))
-    conn.commit()
-    conn.close()
-    return jsonify({"mensaje": "Programa creado"}), 201
+
+    try:
+        cursor.execute("""
+            INSERT INTO programa_academico (nombre_programa, id_facultad, tipo)
+            VALUES (%s, %s, %s)
+        """, (nombre_programa, id_facultad, tipo))
+        conn.commit()
+        conn.close()
+        return jsonify({"mensaje": "Programa creado"}), 201
+
+    except mysql.connector.errors.IntegrityError:
+        conn.rollback()
+        conn.close()
+        return jsonify({"error": "El programa ya existe"}), 400
 
 
 @program_routes.route("/programas", methods=["GET"])
@@ -38,7 +46,7 @@ def listar_programas():
 def obtener_programa(id_programa):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM programa_academico WHERE id_programa=%s", (id_programa,))
+    cursor.execute("SELECT * FROM programa_academico WHERE id_programa = %s", (id_programa,))
     programa = cursor.fetchone()
     conn.close()
 
@@ -59,31 +67,48 @@ def modificar_programa(id_programa):
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE programa_academico
-        SET nombre_programa=%s, id_facultad=%s, tipo=%s
-        WHERE id_programa=%s
-    """, (nombre_programa, id_facultad, tipo, id_programa))
-    conn.commit()
-    filas_afectadas = cursor.rowcount
-    conn.close()
 
-    if filas_afectadas == 0:
-        return jsonify({"error": "Programa no encontrado"}), 404
+    try:
+        cursor.execute("""
+            UPDATE programa_academico
+            SET nombre_programa = %s,
+                id_facultad = %s,
+                tipo = %s
+            WHERE id_programa = %s
+        """, (nombre_programa, id_facultad, tipo, id_programa))
 
-    return jsonify({"mensaje": "Programa actualizado"}), 200
+        conn.commit()
+        filas = cursor.rowcount
+        conn.close()
+
+        if filas == 0:
+            return jsonify({"error": "Programa no encontrado"}), 404
+
+        return jsonify({"mensaje": "Programa actualizado"}), 200
+
+    except mysql.connector.errors.IntegrityError:
+        conn.rollback()
+        conn.close()
+        return jsonify({"error": "Ya existe un programa con ese nombre"}), 400
 
 
 @program_routes.route("/programa/<int:id_programa>", methods=["DELETE"])
 def eliminar_programa(id_programa):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM programa_academico WHERE id_programa=%s", (id_programa,))
-    conn.commit()
-    filas_afectadas = cursor.rowcount
-    conn.close()
 
-    if filas_afectadas == 0:
-        return jsonify({"error": "Programa no encontrado"}), 404
+    try:
+        cursor.execute("DELETE FROM programa_academico WHERE id_programa = %s", (id_programa,))
+        conn.commit()
+        filas = cursor.rowcount
+        conn.close()
 
-    return jsonify({"mensaje": "Programa eliminado"}), 200
+        if filas == 0:
+            return jsonify({"error": "Programa no encontrado"}), 404
+
+        return jsonify({"mensaje": "Programa eliminado"}), 200
+
+    except mysql.connector.errors.IntegrityError:
+        conn.rollback()
+        conn.close()
+        return jsonify({"error": "No se puede eliminar el programa porque tiene participantes asociados."}), 400

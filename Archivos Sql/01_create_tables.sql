@@ -10,7 +10,7 @@ CREATE TABLE facultad (
 -- Tabla: programa_academico
 CREATE TABLE programa_academico (
     id_programa INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_programa VARCHAR(120) NOT NULL,
+    nombre_programa VARCHAR(120) NOT NULL UNIQUE,
     id_facultad INT NOT NULL,
     tipo ENUM('grado', 'posgrado') NOT NULL,
     CONSTRAINT fk_programa_facultad
