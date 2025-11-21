@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_connection
 
-participantes_routes = Blueprint('participantes_routes', __name__)
+participantes_routes = Blueprint('participantes_routes')
 
 @participantes_routes.route("/participante", methods=["POST"])
 def crear_participante():

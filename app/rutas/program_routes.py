@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_connection
 
-program_routes = Blueprint('program_routes', __name__)
+program_routes = Blueprint('program_routes')
 
 @program_routes.route("/programa", methods=["POST"])
 def crear_programa():

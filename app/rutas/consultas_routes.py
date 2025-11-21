@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_connection
 
-consultas_routes = Blueprint('consultas_routes', _name_)
+consultas_routes = Blueprint('consultas_routes')
 
 
 @consultas_routes.route("/participante/<ci>/historial", methods=["GET"])

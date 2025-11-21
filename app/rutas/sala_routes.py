@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_connection
 
-sala_routes = Blueprint('sala_routes', __name__)
+sala_routes = Blueprint('sala_routes')
 
 @sala_routes.route("/salas", methods=["GET"])
 def obtener_salas():
