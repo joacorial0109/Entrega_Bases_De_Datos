@@ -140,41 +140,40 @@ def crear_reserva():
             {"error": "El participante ya tiene una reserva en ese turno y fecha"}
         ), 400
 
-    cursor.execute(
-        """
-        SELECT COUNT(*) AS total
-        FROM reserva r
-        JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
-        WHERE rp.ci_participante = %s
-          AND r.fecha = %s
-          AND r.estado <> 'cancelada'
-        """,
-        (ci_participante, fecha),
-    )
-    total_dia = cursor.fetchone()["total"]
-    if total_dia >= 2:
-        conn.close()
-        return jsonify(
-            {"error": "El participante ya tiene el máximo de 2 reservas para ese día"}
-        ), 400
+    cursor.execute("""
+        SELECT ppa.rol, pa.tipo
+        FROM participante_programa_academico ppa
+        JOIN programa_academico pa ON pa.id_programa = ppa.id_programa
+        WHERE ppa.ci_participante = %s
+    """, (ci_participante,))
+    datos = cursor.fetchone()
 
-    cursor.execute(
-        """
-        SELECT COUNT(*) AS total
-        FROM reserva r
-        JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
-        WHERE rp.ci_participante = %s
-          AND YEARWEEK(r.fecha, 1) = YEARWEEK(%s, 1)
-          AND r.estado <> 'cancelada'
-        """,
-        (ci_participante, fecha),
-    )
-    total_semana = cursor.fetchone()["total"]
-    if total_semana >= 3:
-        conn.close()
-        return jsonify(
-            {"error": "El participante ya tiene el máximo de 3 reservas para esa semana"}
-        ), 400
+    es_estudiante_grado = datos and datos["rol"] == "alumno" and datos["tipo"] == "grado"
+
+    if es_estudiante_grado:
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM reserva r
+            JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
+            WHERE rp.ci_participante = %s
+              AND r.fecha = %s
+              AND r.estado <> 'cancelada'
+        """, (ci_participante, fecha))
+        if cursor.fetchone()["total"] >= 2:
+            conn.close()
+            return jsonify({"error": "Máximo de 2 reservas por día para estudiantes de grado"}), 400
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM reserva r
+            JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
+            WHERE rp.ci_participante = %s
+              AND YEARWEEK(r.fecha, 1) = YEARWEEK(%s, 1)
+              AND r.estado <> 'cancelada'
+        """, (ci_participante, fecha))
+        if cursor.fetchone()["total"] >= 3:
+            conn.close()
+            return jsonify({"error": "Máximo de 3 reservas por semana para estudiantes de grado"}), 400
 
     cursor.execute(
         """
@@ -278,3 +277,118 @@ def registrar_asistencia(id_reserva):
         ), 404
 
     return jsonify({"message": "Asistencia actualizada"}), 200
+
+@reserva_routes.route("/reserva/<int:id_reserva>/participantes", methods=["POST"])
+def agregar_participante_reserva(id_reserva):
+    data = request.get_json()
+    ci = data.get("ci_participante")
+
+    if not ci:
+        return jsonify({"error": "Debe indicar ci_participante"}), 400
+
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+
+    cursor.execute("SELECT * FROM reserva WHERE id_reserva = %s AND estado <> 'cancelada'", (id_reserva,))
+    reserva = cursor.fetchone()
+    if not reserva:
+        conn.close()
+        return jsonify({"error": "La reserva no existe"}), 404
+
+    fecha = reserva["fecha"]
+    id_turno = reserva["id_turno"]
+    id_sala = reserva["id_sala"]
+
+
+    cursor.execute("SELECT * FROM participante WHERE ci = %s", (ci,))
+    participante = cursor.fetchone()
+    if not participante:
+        conn.close()
+        return jsonify({"error": "El participante no existe"}), 404
+
+
+    cursor.execute("""
+        SELECT * FROM reserva_participante
+        WHERE id_reserva = %s AND ci_participante = %s
+    """, (id_reserva, ci))
+    ya_esta = cursor.fetchone()
+    if ya_esta:
+        conn.close()
+        return jsonify({"error": "El participante ya está en esta reserva"}), 400
+
+
+    cursor.execute("""
+        SELECT * FROM sancion_participante
+        WHERE ci_participante = %s
+          AND fecha_inicio <= %s
+          AND fecha_fin >= %s
+    """, (ci, fecha, fecha))
+    sancion = cursor.fetchone()
+    if sancion:
+        conn.close()
+        return jsonify({"error": "El participante está sancionado"}), 400
+
+
+    cursor.execute("""
+        SELECT r.id_reserva
+        FROM reserva r
+        JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
+        WHERE rp.ci_participante = %s
+          AND r.fecha = %s
+          AND r.id_turno = %s
+          AND r.estado <> 'cancelada'
+    """, (ci, fecha, id_turno))
+    conflicto = cursor.fetchone()
+    if conflicto:
+        conn.close()
+        return jsonify({"error": "El participante ya tiene una reserva en ese turno y fecha"}), 400
+
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM reserva r
+        JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
+        WHERE rp.ci_participante = %s
+          AND r.fecha = %s
+          AND r.estado <> 'cancelada'
+    """, (ci, fecha))
+    total_dia = cursor.fetchone()["total"]
+    if total_dia >= 2:
+        conn.close()
+        return jsonify({"error": "Máximo de 2 reservas por día alcanzado"}), 400
+
+
+    cursor.execute("""
+        SELECT COUNT(*) AS total
+        FROM reserva r
+        JOIN reserva_participante rp ON rp.id_reserva = r.id_reserva
+        WHERE rp.ci_participante = %s
+          AND YEARWEEK(r.fecha, 1) = YEARWEEK(%s, 1)
+          AND r.estado <> 'cancelada'
+    """, (ci, fecha))
+    total_semana = cursor.fetchone()["total"]
+    if total_semana >= 3:
+        conn.close()
+        return jsonify({"error": "Máximo de 3 reservas por semana alcanzado"}), 400
+
+
+    cursor.execute("SELECT capacidad FROM sala WHERE id_sala = %s", (id_sala,))
+    capacidad = cursor.fetchone()["capacidad"]
+
+    cursor.execute("SELECT COUNT(*) AS ocupados FROM reserva_participante WHERE id_reserva = %s", (id_reserva,))
+    ocupados = cursor.fetchone()["ocupados"]
+
+    if ocupados >= capacidad:
+        conn.close()
+        return jsonify({"error": "La sala está llena"}), 400
+
+    cursor.execute("""
+        INSERT INTO reserva_participante (id_reserva, ci_participante, asistencia)
+        VALUES (%s, %s, %s)
+    """, (id_reserva, ci, False))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Participante agregado correctamente"}), 201
