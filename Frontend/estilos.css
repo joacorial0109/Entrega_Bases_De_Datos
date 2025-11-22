@@ -1,0 +1,41 @@
+body {
+    font-family: Arial;
+    background: #f3f3f3;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+.mensaje {
+    margin-top: 10px;
+    padding: 10px;
+    background: #ffdddd;
+    border-left: 4px solid red;
+    display: none;
+}
+
+
+.menu button {
+    margin: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.seccion {
+    display: none;
+    margin-top: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+form input, form select {
+    margin: 5px;
+    padding: 8px;
+}
+.mensaje.exito {
+    background: #ddffdd;
+    border-left: 4px solid green;
+    color: #090;
+}

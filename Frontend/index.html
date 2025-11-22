@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Salas UCU</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<h1>Gestión de Salas de Estudio</h1>
+
+<!-- Mensajes -->
+<div id="mensaje" class="mensaje"></div>
+
+<!-- Menú -->
+<div class="menu">
+    <button onclick="mostrarSeccion('participantes')">Participantes</button>
+    <button onclick="mostrarSeccion('salas')">Salas</button>
+    <button onclick="mostrarSeccion('reservas')">Reservas</button>
+</div>
+
+<!-- =======================================
+    SECCIÓN PARTICIPANTES
+======================================= -->
+<div id="participantes" class="seccion">
+
+    <h2>Participantes</h2>
+
+    <form onsubmit="crearParticipante(event)">
+        <input type="text" id="p_ci" placeholder="CI" required>
+        <input type="text" id="p_nombre" placeholder="Nombre" required>
+        <input type="text" id="p_apellido" placeholder="Apellido" required>
+        <input type="email" id="p_email" placeholder="Email" required>
+        <input type="number" id="p_login" placeholder="ID Login" required>
+
+        <button type="submit">Crear participante</button>
+    </form>
+
+    <h3>Listado</h3>
+    <button onclick="cargarParticipantes()">Actualizar</button>
+    <ul id="lista_participantes"></ul>
+
+</div>
+
+
+<!-- =======================================
+    SECCIÓN SALAS
+======================================= -->
+<div id="salas" class="seccion">
+
+    <h2>Salas</h2>
+
+    <form onsubmit="crearSala(event)">
+        <input type="text" id="s_nombre" placeholder="Nombre sala" required>
+        <input type="number" id="s_edificio" placeholder="ID Edificio" required>
+        <input type="number" id="s_capacidad" placeholder="Capacidad" required>
+        <select id="s_tipo">
+            <option value="libre">Libre</option>
+            <option value="posgrado">Posgrado</option>
+            <option value="docente">Docente</option>
+        </select>
+
+        <button type="submit">Crear sala</button>
+    </form>
+
+    <h3>Listado</h3>
+    <button onclick="cargarSalas()">Actualizar</button>
+    <ul id="lista_salas"></ul>
+
+</div>
+
+
+<!-- =======================================
+    SECCIÓN RESERVAS
+======================================= -->
+<div id="reservas" class="seccion">
+
+    <h2>Reservas</h2>
+
+    <!-- Crear reserva -->
+    <form onsubmit="crearReserva(event)">
+        <input type="number" id="r_sala" placeholder="ID Sala" required>
+        <input type="date" id="r_fecha" required>
+        <input type="number" id="r_turno" placeholder="ID Turno" required>
+        <input type="text" id="r_ci" placeholder="CI Participante" required>
+        <button type="submit">Crear Reserva</button>
+    </form>
+
+    <hr>
+
+    <!-- Agregar participante -->
+    <h3>Agregar participante a una reserva</h3>
+
+    <form onsubmit="agregarParticipanteReserva(event)">
+        <input type="number" id="ap_id_reserva" placeholder="ID Reserva" required>
+        <input type="text" id="ap_ci" placeholder="CI Participante" required>
+        <button type="submit">Agregar</button>
+    </form>
+
+    <hr>
+
+    <!-- Listado -->
+    <h3>Listado de reservas</h3>
+    <button onclick="cargarReservas()">Actualizar</button>
+    <ul id="lista_reservas"></ul>
+
+</div>
+
+
+<script src="app.js"></script>
+</body>
+</html>
