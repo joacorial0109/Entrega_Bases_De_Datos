@@ -1,41 +1,149 @@
+Estilos.css:
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
 body {
-    font-family: Arial;
-    background: #f3f3f3;
+    font-family: 'Poppins', sans-serif;
+    background: #f2f4f7;
+    margin: 0;
     padding: 20px;
+    color: #333;
 }
 
-h1 {
+.titulo-principal {
     text-align: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #222;
 }
+
+.titulo-seccion {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.subtitulo {
+    margin-top: 25px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
 .mensaje {
-    margin-top: 10px;
-    padding: 10px;
-    background: #ffdddd;
-    border-left: 4px solid red;
+    margin-top: 15px;
+    padding: 12px 18px;
+    background: #ffe1e1;
+    border-left: 4px solid #d93025;
+    border-radius: 6px;
     display: none;
+    font-size: 14px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+.mensaje.exito {
+    background: #d4f8d4;
+    border-left-color: #2e7d32;
+    color: #1b5e20;
+}
 
-.menu button {
-    margin: 10px;
-    padding: 10px 20px;
+.btn {
+    background-color: blue;
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 6px 0;
+}
+
+.btn:hover {
+    background-color: #1009cf;
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-secundario {
+    background-color: white;
+    border: 2px solid #1009cf;
+    color: #1009cf;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-secundario:hover {
+    background-color: blue;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
 }
 
 .seccion {
     display: none;
-    margin-top: 20px;
     background: white;
-    padding: 20px;
-    border-radius: 6px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 form input, form select {
-    margin: 5px;
-    padding: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.2s;
 }
-.mensaje.exito {
-    background: #ddffdd;
-    border-left: 4px solid green;
-    color: #090;
+
+form input:focus, form select:focus {
+    border-color: #1009cf;
+    outline: none;
+    box-shadow: 0 0 3px rgba(232, 90, 12, 0.4);
+}
+
+.lista {
+    margin-top: 15px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.lista li {
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #eee;
+}
+
+.lista li button {
+    margin-right: 5px;
+}
+
+.divider {
+    margin: 25px 0;
+    border: none;
+    border-top: 1px solid #ddd;
 }

@@ -1,11 +1,10 @@
 const API = "http://localhost:5000";
 
-/* =============================
-   SISTEMA DE MENSAJES
-============================= */
 
 function mostrarMensaje(texto, tipo = "error") {
     const div = document.getElementById("mensaje");
+    if (!div) return;
+
     div.innerText = texto;
     div.className = "mensaje " + (tipo === "exito" ? "exito" : "");
     div.style.display = "block";
@@ -14,18 +13,28 @@ function mostrarMensaje(texto, tipo = "error") {
     }, 4000);
 }
 
-/* =============================
-   CONTROL DE SECCIONES
-============================= */
-
 function mostrarSeccion(id) {
     document.querySelectorAll(".seccion").forEach(s => s.style.display = "none");
-    document.getElementById(id).style.display = "block";
+    const seccion = document.getElementById(id);
+    if (!seccion) return;
+    seccion.style.display = "block";
+
+    if (id === "reservas") {
+        cargarSalasParaReservar();
+        cargarTurnos();
+        cargarReservas();
+    }
+
+    if (id === "salas") {
+        cargarEdificios();
+        cargarSalas();
+    }
+
+    if (id === "participantes") {
+        cargarParticipantes();
+    }
 }
 
-/* =============================
-   PARTICIPANTES
-============================= */
 
 async function cargarParticipantes() {
     try {
@@ -33,6 +42,7 @@ async function cargarParticipantes() {
         const datos = await res.json();
 
         const lista = document.getElementById("lista_participantes");
+        if (!lista) return;
         lista.innerHTML = "";
 
         datos.forEach(p => {
@@ -42,6 +52,7 @@ async function cargarParticipantes() {
         mostrarMensaje("Participantes cargados correctamente", "exito");
 
     } catch (err) {
+        console.error(err);
         mostrarMensaje("Error cargando participantes");
     }
 }
@@ -74,9 +85,6 @@ async function crearParticipante(e) {
     cargarParticipantes();
 }
 
-/* =============================
-   SALAS
-============================= */
 
 async function cargarSalas() {
     try {
@@ -84,15 +92,23 @@ async function cargarSalas() {
         const datos = await res.json();
 
         const lista = document.getElementById("lista_salas");
+        if (!lista) return;
+
         lista.innerHTML = "";
 
         datos.forEach(s => {
-            lista.innerHTML += `<li>${s.id_sala} - ${s.nombre_sala} (${s.tipo_sala})</li>`;
+            lista.innerHTML += `
+                <li>
+                    ${s.id_sala} - ${s.nombre_sala}
+                    (${s.tipo_sala}) - ${s.nombre_edificio}
+                    [cap: ${s.capacidad}]
+                </li>`;
         });
 
         mostrarMensaje("Salas cargadas correctamente", "exito");
 
-    } catch {
+    } catch (err) {
+        console.error(err);
         mostrarMensaje("Error cargando salas");
     }
 }
@@ -123,6 +139,30 @@ async function crearSala(e) {
     mostrarMensaje("Sala creada con éxito ⭐", "exito");
     cargarSalas();
 }
+
+async function cargarEdificios() {
+    try {
+        const res = await fetch(`${API}/edificios`);
+        const edificios = await res.json();
+
+        const select = document.getElementById("s_edificio");
+        if (!select) return;
+
+        select.innerHTML = "";
+
+        edificios.forEach(e => {
+            select.innerHTML += `
+                <option value="${e.id_edificio}">
+                    ${e.nombre_edificio}
+                </option>
+            `;
+        });
+    } catch (err) {
+        console.error(err);
+        mostrarMensaje("Error cargando edificios");
+    }
+}
+
 async function verParticipantes(id_reserva) {
     const res = await fetch(`${API}/reserva/${id_reserva}/participantes`);
     const datos = await res.json();
@@ -145,16 +185,14 @@ async function verParticipantes(id_reserva) {
     alert(texto);
 }
 
-/* =============================
-   RESERVAS
-============================= */
-
 async function cargarReservas() {
     try {
         const res = await fetch(`${API}/reservas`);
         const datos = await res.json();
 
         const lista = document.getElementById("lista_reservas");
+        if (!lista) return;
+
         lista.innerHTML = "";
 
         datos.forEach(r => {
@@ -166,22 +204,20 @@ async function cargarReservas() {
                     Fecha: ${r.fecha} |
                     Estado: ${r.estado}
                     <br>
-
-                    <button onclick="cancelarReserva(${r.id_reserva})">Cancelar</button>
-                    <button onclick="finalizarReserva(${r.id_reserva})">Finalizar</button>
-                    <button onclick="verParticipantes(${r.id_reserva})">Ver Participantes</button>
+                    <button class="btn-secundario" onclick="cancelarReserva(${r.id_reserva})">Cancelar</button>
+                    <button class="btn-secundario" onclick="finalizarReserva(${r.id_reserva})">Finalizar</button>
+                    <button class="btn" onclick="verParticipantes(${r.id_reserva})">Ver Participantes</button>
                 </li>
-                <hr>
             `;
         });
 
         mostrarMensaje("Reservas cargadas correctamente", "exito");
 
-    } catch {
+    } catch (err) {
+        console.error(err);
         mostrarMensaje("Error cargando reservas");
     }
 }
-
 
 async function crearReserva(e) {
     e.preventDefault();
@@ -210,9 +246,51 @@ async function crearReserva(e) {
     cargarReservas();
 }
 
-/* =============================
-   AGREGAR PARTICIPANTE A RESERVA
-============================= */
+async function cargarSalasParaReservar() {
+    try {
+        const res = await fetch(`${API}/salas`);
+        const salas = await res.json();
+
+        const select = document.getElementById("r_sala");
+        if (!select) return;
+
+        select.innerHTML = "";
+
+        salas.forEach(s => {
+            select.innerHTML += `
+                <option value="${s.id_sala}">
+                    ${s.nombre_sala} - ${s.nombre_edificio} (cap: ${s.capacidad}, ${s.tipo_sala})
+                </option>
+            `;
+        });
+    } catch (err) {
+        console.error(err);
+        mostrarMensaje("Error cargando salas para reservar");
+    }
+}
+
+async function cargarTurnos() {
+    try {
+        const res = await fetch(`${API}/turnos`);
+        const turnos = await res.json();
+
+        const select = document.getElementById("r_turno");
+        if (!select) return;
+
+        select.innerHTML = "";
+
+        turnos.forEach(t => {
+            select.innerHTML += `
+                <option value="${t.id_turno}">
+                    ${t.hora_inicio} - ${t.hora_fin}
+                </option>
+            `;
+        });
+    } catch (err) {
+        console.error(err);
+        mostrarMensaje("Error cargando turnos");
+    }
+}
 
 async function agregarParticipanteReserva(e) {
     e.preventDefault();
@@ -237,10 +315,6 @@ async function agregarParticipanteReserva(e) {
     cargarReservas();
 }
 
-/* =============================
-   CANCELAR RESERVA
-============================= */
-
 async function cancelarReserva(id) {
     const res = await fetch(`${API}/reserva/${id}/cancelar`, {
         method: "PUT"
@@ -257,10 +331,6 @@ async function cancelarReserva(id) {
     cargarReservas();
 }
 
-/* =============================
-   FINALIZAR RESERVA
-============================= */
-
 async function finalizarReserva(id) {
     const res = await fetch(`${API}/reserva/${id}/finalizar`, {
         method: "PUT"
@@ -276,3 +346,6 @@ async function finalizarReserva(id) {
     mostrarMensaje("Reserva finalizada", "exito");
     cargarReservas();
 }
+
+console.log("Admin JS cargado");
+mostrarSeccion('participantes');

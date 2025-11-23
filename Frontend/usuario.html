@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal del Usuario</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<h1 class="titulo-principal">Reservas de Salas</h1>
+
+<div id="mensaje" class="mensaje"></div>
+
+<h2 class="titulo-seccion">Nueva Reserva</h2>
+
+<form onsubmit="crearReservaUsuario(event)">
+    <select id="u_sala" required></select>
+
+    <input type="date" id="u_fecha" required>
+
+    <select id="u_turno" required></select>
+
+    <button class="btn" type="submit">Reservar</button>
+</form>
+
+<hr class="divider">
+
+<h2 class="titulo-seccion">Mis Reservas</h2>
+
+<button class="btn-secundario" onclick="cargarMisReservas()">Actualizar</button>
+
+<ul id="u_lista_reservas" class="lista"></ul>
+
+<script src="usuario.js"></script>
+</body>
+</html>

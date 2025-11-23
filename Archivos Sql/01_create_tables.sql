@@ -1,125 +1,144 @@
-CREATE DATABASE IF NOT EXISTS gestion_salas;
+DROP DATABASE IF EXISTS gestion_salas;
+CREATE DATABASE gestion_salas;
 USE gestion_salas;
 
--- Tabla: facultad
+---------------------------------------------------------
+-- 1) FACULTAD
+---------------------------------------------------------
 CREATE TABLE facultad (
     id_facultad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
 );
 
--- Tabla: programa_academico
+---------------------------------------------------------
+-- 2) PROGRAMA ACADÉMICO
+---------------------------------------------------------
 CREATE TABLE programa_academico (
     id_programa INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_programa VARCHAR(120) NOT NULL UNIQUE,
+    nombre_programa VARCHAR(150) NOT NULL,
     id_facultad INT NOT NULL,
-    tipo ENUM('grado', 'posgrado') NOT NULL,
-    CONSTRAINT fk_programa_facultad
-        FOREIGN KEY (id_facultad) REFERENCES facultad(id_facultad)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+    tipo ENUM('grado','posgrado','otros') NOT NULL,
+
+    FOREIGN KEY (id_facultad) REFERENCES facultad(id_facultad)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Tabla: edificio
+---------------------------------------------------------
+-- 3) LOGIN (CORREGIDO)
+---------------------------------------------------------
+CREATE TABLE login (
+    id_login INT AUTO_INCREMENT PRIMARY KEY,
+    usuario VARCHAR(100) UNIQUE NOT NULL,
+    contrasena VARCHAR(100) NOT NULL
+);
+
+---------------------------------------------------------
+-- 4) PARTICIPANTE
+---------------------------------------------------------
+CREATE TABLE participante (
+    ci VARCHAR(20) PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(120) NOT NULL,
+    id_login INT,
+
+    FOREIGN KEY (id_login) REFERENCES login(id_login)
+        ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+---------------------------------------------------------
+-- 5) PARTICIPANTE x PROGRAMA
+---------------------------------------------------------
+CREATE TABLE participante_programa_academico (
+    ci_participante VARCHAR(20),
+    id_programa INT,
+    rol ENUM('alumno','docente') NOT NULL,
+
+    PRIMARY KEY (ci_participante, id_programa),
+
+    FOREIGN KEY (ci_participante) REFERENCES participante(ci)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
+    FOREIGN KEY (id_programa) REFERENCES programa_academico(id_programa)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+---------------------------------------------------------
+-- 6) EDIFICIO
+---------------------------------------------------------
 CREATE TABLE edificio (
     id_edificio INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_edificio VARCHAR(100) NOT NULL,
+    nombre_edificio VARCHAR(120) NOT NULL,
     direccion VARCHAR(200),
     departamento VARCHAR(100)
 );
 
--- Tabla: sala
+---------------------------------------------------------
+-- 7) SALA
+---------------------------------------------------------
 CREATE TABLE sala (
     id_sala INT AUTO_INCREMENT PRIMARY KEY,
     nombre_sala VARCHAR(100) NOT NULL,
     id_edificio INT NOT NULL,
     capacidad INT NOT NULL,
-    tipo_sala ENUM('libre', 'posgrado', 'docente') NOT NULL,
+    tipo_sala ENUM('libre','posgrado','docente') NOT NULL,
+
     FOREIGN KEY (id_edificio) REFERENCES edificio(id_edificio)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Tabla: turno
+---------------------------------------------------------
+-- 8) TURNO
+---------------------------------------------------------
 CREATE TABLE turno (
     id_turno INT AUTO_INCREMENT PRIMARY KEY,
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL
 );
 
-USE gestion_salas;
-
--- Tabla: login
-CREATE TABLE login (
-    id_login INT AUTO_INCREMENT PRIMARY KEY,
-    correo VARCHAR(100) NOT NULL UNIQUE,
-    contrasena VARCHAR(100) NOT NULL
-);
-
--- Tabla: participante
-CREATE TABLE participante (
-    ci VARCHAR(15) PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    id_login INT,
-    FOREIGN KEY (id_login) REFERENCES login(id_login)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL
-);
-
--- Tabla: participante_programa_academico
-CREATE TABLE participante_programa_academico (
-    id_alumno_programa INT AUTO_INCREMENT PRIMARY KEY,
-    ci_participante VARCHAR(15) NOT NULL,
-    id_programa INT NOT NULL,
-    rol ENUM('alumno', 'docente') NOT NULL,
-    FOREIGN KEY (ci_participante) REFERENCES participante(ci)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (id_programa) REFERENCES programa_academico(id_programa)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-);
-
-USE gestion_salas;
-
--- Tabla: reserva
+---------------------------------------------------------
+-- 9) RESERVA
+---------------------------------------------------------
 CREATE TABLE reserva (
     id_reserva INT AUTO_INCREMENT PRIMARY KEY,
     id_sala INT NOT NULL,
     fecha DATE NOT NULL,
     id_turno INT NOT NULL,
-    estado ENUM('activa', 'cancelada', 'sin_asistencia', 'finalizada') DEFAULT 'activa',
+    estado ENUM('activa','cancelada','finalizada') DEFAULT 'activa',
+
     FOREIGN KEY (id_sala) REFERENCES sala(id_sala)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
     FOREIGN KEY (id_turno) REFERENCES turno(id_turno)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Tabla: reserva_participante
+---------------------------------------------------------
+-- 10) RESERVA x PARTICIPANTE
+---------------------------------------------------------
 CREATE TABLE reserva_participante (
-    id_reserva_participante INT AUTO_INCREMENT PRIMARY KEY,
-    id_reserva INT NOT NULL,
-    ci_participante VARCHAR(15) NOT NULL,
-    fecha_solicitud_reserva DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id_reserva INT,
+    ci_participante VARCHAR(20),
     asistencia BOOLEAN DEFAULT FALSE,
+
+    PRIMARY KEY (id_reserva, ci_participante),
+
     FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
     FOREIGN KEY (ci_participante) REFERENCES participante(ci)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Tabla: sancion_participante
+---------------------------------------------------------
+-- 11) SANCIONES
+---------------------------------------------------------
 CREATE TABLE sancion_participante (
     id_sancion INT AUTO_INCREMENT PRIMARY KEY,
-    ci_participante VARCHAR(15) NOT NULL,
+    ci_participante VARCHAR(20) NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
+
     FOREIGN KEY (ci_participante) REFERENCES participante(ci)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE
 );

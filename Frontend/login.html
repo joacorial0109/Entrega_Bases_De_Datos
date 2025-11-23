@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Gestión de Salas UCU</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<h1 class="titulo-principal">Ingresar al sistema</h1>
+
+<div id="mensaje" class="mensaje"></div>
+
+<div class="seccion" style="display:block; max-width:380px">
+
+    <form onsubmit="hacerLogin(event)">
+        <input type="text" id="usuario" placeholder="Usuario" required>
+        <input type="password" id="contrasena" placeholder="Contraseña" required>
+
+        <button class="btn" type="submit">Ingresar</button>
+    </form>
+
+</div>
+
+<script src="login.js"></script>
+
+</body>
+</html>
