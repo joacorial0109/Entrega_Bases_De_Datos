@@ -1,40 +1,45 @@
 # Entrega_Bases_De_Datos
 
-Instructivo para correr la aplicación localmente
+Instructivo completo para correr la aplicación de forma local
 
-Requisitos:
+Este instructivo explica cómo ejecutar el sistema de Gestión de Salas UCU de forma local, incluyendo backend (Flask + MySQL), la base de datos y el frontend.
 
-Python 3.10+
+- Requisitos previos:
+Tener instalado Python y MySQL.
 
-MySQL Server
+- Descargar o clonar el proyecto.
+Podés bajar el archivo ZIP o clonarlo con Git y abrir la carpeta del proyecto.
 
-pip instalado
-
-Descargar el proyecto
-Clonar o descargar el ZIP y abrir la carpeta del proyecto.
-
-Instalar dependencias del backend
-Ejecutar:
+- Instalar dependencias del backend:
+Ejecutar en la raíz del proyecto
 pip install -r requirements.txt
 
-Crear la base de datos
-Ejecutar en MySQL Workbench o DataGrip los archivos:
+- Creación de la base de datos:
+Abrir MySQL Workbench o DataGrip y ejecutar primero el archivo:
 01_create_tables.sql
+y luego:
 02_insert_data.sql
+Estos archivos crean todas las tablas necesarias (participantes, sala, reserva, edificio, programa_academico, etc.) e insertan los datos iniciales.
 
-Configurar la conexión MySQL
-Editar el archivo app/db.py y ajustar los valores:
-host, user, password, database.
+- Configurar la conexión a MySQL:
+Abrir el archivo:
+app/db.py
+Verificar que los datos (host, user, password, database) coincidan con la configuración local de tu MySQL.
 
-Ejecutar el backend (Flask)
+- Ejecutar el backend (Flask):
+Desde la raíz del proyecto ejecutar:
 python app/main.py
 
-Ejecutar el frontend
-Abrir directamente el archivo:
+- Ejecutar el frontend:
+No requiere servidor. Solo abrir con doble click:
 Frontend/login.html
 
 Usuarios de prueba:
-Administrador: admin@ucu.edu.uy
- / admin123
-Estudiante: juan@ucu.edu.uy
- / 1234
+
+Administrador:
+usuario: admin@ucu.edu.uy
+contraseña: admin123
+
+Estudiante:
+usuario: juan@ucu.edu.uy
+contraseña: 1234
