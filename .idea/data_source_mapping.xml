@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cab2541e-9a42-4282-a0af-ca7585f46aa5/console.sql" value="cab2541e-9a42-4282-a0af-ca7585f46aa5" />
     <file url="file://$PROJECT_DIR$/Archivos Sql/01_create_tables.sql" value="cab2541e-9a42-4282-a0af-ca7585f46aa5" />
     <file url="file://$PROJECT_DIR$/Archivos Sql/02_insert_data.sql" value="cab2541e-9a42-4282-a0af-ca7585f46aa5" />
     <file url="file://$PROJECT_DIR$/Archivos Sql/03_selects.sql" value="cab2541e-9a42-4282-a0af-ca7585f46aa5" />

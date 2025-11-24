@@ -81,7 +81,7 @@ async function crearParticipante(e) {
         return;
     }
 
-    mostrarMensaje("Participante creado con éxito ⭐", "exito");
+    mostrarMensaje("Participante creado con éxito", "exito");
     cargarParticipantes();
 }
 
@@ -136,7 +136,7 @@ async function crearSala(e) {
         return;
     }
 
-    mostrarMensaje("Sala creada con éxito ⭐", "exito");
+    mostrarMensaje("Sala creada con éxito", "exito");
     cargarSalas();
 }
 
@@ -242,7 +242,7 @@ async function crearReserva(e) {
         return;
     }
 
-    mostrarMensaje("Reserva creada con éxito ⭐", "exito");
+    mostrarMensaje("Reserva creada con éxito", "exito");
     cargarReservas();
 }
 
@@ -311,7 +311,7 @@ async function agregarParticipanteReserva(e) {
         return;
     }
 
-    mostrarMensaje("Participante agregado con éxito ⭐", "exito");
+    mostrarMensaje("Participante agregado con éxito", "exito");
     cargarReservas();
 }
 

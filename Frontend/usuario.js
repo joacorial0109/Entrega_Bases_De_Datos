@@ -70,7 +70,7 @@ async function crearReservaUsuario(e) {
         return;
     }
 
-    mensaje("Reserva creada con éxito ⭐", "exito");
+    mensaje("Reserva creada con éxito", "exito");
     cargarMisReservas();
 }
 
@@ -84,7 +84,7 @@ async function cargarMisReservas() {
     lista.innerHTML = "";
 
     reservas
-        .filter(r => r.ci_participante === ci || true) // si querés filtrar exacto, adaptamos
+        .filter(r => r.ci_participante === ci || true)
         .forEach(r => {
             lista.innerHTML += `
                 <li>
