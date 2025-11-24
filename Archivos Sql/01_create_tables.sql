@@ -38,7 +38,7 @@ CREATE TABLE participante (
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- 5) PARTICIPANTE x PROGRAMA
+-- 5) PARTICIPANTE POR PROGRAMA
 CREATE TABLE participante_programa_academico (
     ci_participante VARCHAR(20),
     id_programa INT,
