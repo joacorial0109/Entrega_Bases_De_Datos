@@ -2,17 +2,13 @@ DROP DATABASE IF EXISTS gestion_salas;
 CREATE DATABASE gestion_salas;
 USE gestion_salas;
 
----------------------------------------------------------
 -- 1) FACULTAD
----------------------------------------------------------
 CREATE TABLE facultad (
     id_facultad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
 );
 
----------------------------------------------------------
 -- 2) PROGRAMA ACADÉMICO
----------------------------------------------------------
 CREATE TABLE programa_academico (
     id_programa INT AUTO_INCREMENT PRIMARY KEY,
     nombre_programa VARCHAR(150) NOT NULL,
@@ -23,18 +19,14 @@ CREATE TABLE programa_academico (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
----------------------------------------------------------
--- 3) LOGIN (CORREGIDO)
----------------------------------------------------------
+-- 3) LOGIN
 CREATE TABLE login (
     id_login INT AUTO_INCREMENT PRIMARY KEY,
     usuario VARCHAR(100) UNIQUE NOT NULL,
     contrasena VARCHAR(100) NOT NULL
 );
 
----------------------------------------------------------
 -- 4) PARTICIPANTE
----------------------------------------------------------
 CREATE TABLE participante (
     ci VARCHAR(20) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -46,9 +38,7 @@ CREATE TABLE participante (
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 
----------------------------------------------------------
 -- 5) PARTICIPANTE x PROGRAMA
----------------------------------------------------------
 CREATE TABLE participante_programa_academico (
     ci_participante VARCHAR(20),
     id_programa INT,
@@ -63,9 +53,7 @@ CREATE TABLE participante_programa_academico (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
----------------------------------------------------------
 -- 6) EDIFICIO
----------------------------------------------------------
 CREATE TABLE edificio (
     id_edificio INT AUTO_INCREMENT PRIMARY KEY,
     nombre_edificio VARCHAR(120) NOT NULL,
@@ -73,9 +61,7 @@ CREATE TABLE edificio (
     departamento VARCHAR(100)
 );
 
----------------------------------------------------------
 -- 7) SALA
----------------------------------------------------------
 CREATE TABLE sala (
     id_sala INT AUTO_INCREMENT PRIMARY KEY,
     nombre_sala VARCHAR(100) NOT NULL,
@@ -87,18 +73,14 @@ CREATE TABLE sala (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
----------------------------------------------------------
 -- 8) TURNO
----------------------------------------------------------
 CREATE TABLE turno (
     id_turno INT AUTO_INCREMENT PRIMARY KEY,
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL
 );
 
----------------------------------------------------------
 -- 9) RESERVA
----------------------------------------------------------
 CREATE TABLE reserva (
     id_reserva INT AUTO_INCREMENT PRIMARY KEY,
     id_sala INT NOT NULL,
@@ -113,9 +95,7 @@ CREATE TABLE reserva (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
----------------------------------------------------------
 -- 10) RESERVA x PARTICIPANTE
----------------------------------------------------------
 CREATE TABLE reserva_participante (
     id_reserva INT,
     ci_participante VARCHAR(20),
@@ -130,9 +110,7 @@ CREATE TABLE reserva_participante (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
----------------------------------------------------------
 -- 11) SANCIONES
----------------------------------------------------------
 CREATE TABLE sancion_participante (
     id_sancion INT AUTO_INCREMENT PRIMARY KEY,
     ci_participante VARCHAR(20) NOT NULL,
