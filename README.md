@@ -8,7 +8,7 @@ Este instructivo explica cómo ejecutar el sistema de Gestión de Salas UCU de f
 Tener instalado Python y MySQL.
 
 - Descargar o clonar el proyecto.
-Podés bajar el archivo ZIP o clonarlo con Git y abrir la carpeta del proyecto.
+Descargar el archivo ZIP o clonarlo con Git y abrir la carpeta del proyecto.
 
 - Instalar dependencias del backend:
 Ejecutar en la raíz del proyecto
